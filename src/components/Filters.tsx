@@ -40,7 +40,7 @@ export default function Filters({ filters }: FiltersProps) {
         return <Datepicker key={filter.filterName}/>;
     }
   };
-
+  console.log(filters, '__INTO__');
   return (
     <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
       { filters.map(filter => renderFilter(filter)) }

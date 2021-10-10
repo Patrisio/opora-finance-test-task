@@ -1,47 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useTypedSelector } from './hooks/useTypedSelector';
 import Container from '@mui/material/Container';
 import Filters from './components/Filters';
-import { Filter } from './types';
+import { fetchFilters } from './store/adminOrdersSlice';
 import './App.css';
 
 export default function App() {
-  const filters: Filter[] = [
-    {
-      type: 'select',
-      filterName: 'statusGroupList',
-      label: 'Выбор статуса',
-      options: [],
-    },
-    {
-      type: 'multiselect',
-      filterName: 'toChangeStatusGroupID',
-      label: 'Добавить теги',
-      options: [],
-    },
-    {
-      type: 'select',
-      filterName: 'orderBy',
-      label: 'Сортировка',
-      options: [],
-    },
-    {
-      type: 'input',
-      filterName: 'publicID',
-      label: 'ID заявки',
-    },
-    {
-      type: 'select',
-      filterName: 'operationTypeID',
-      label: 'Тип операции',
-      options: [],
-    },
-    {
-      type: 'select',
-      filterName: 'currencyID',
-      label: 'Валюта',
-      options: [],
-    },
-  ];
+  const dispatch = useDispatch();
+  const { filters } = useTypedSelector(state => state.adminOrdersSlice);
+  
+  useEffect(() => {
+    dispatch(fetchFilters());
+  }, [dispatch]);
 
   return (
     <Container>
