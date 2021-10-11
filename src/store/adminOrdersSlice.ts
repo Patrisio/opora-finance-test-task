@@ -49,11 +49,6 @@ type AdminOrderEntity = {
   type: string,
 };
 
-type AdminOrders = {
-  totalLen: number,
-  data: AdminOrderEntity[],
-};
-
 type AdminOrdersState = {
   filters: Filter[],
   selectedFilters: SelectedFilters,
@@ -61,7 +56,8 @@ type AdminOrdersState = {
   filtersError: string | null,
   adminOrdersLoading: boolean,
   adminOrdersError: string | null,
-  adminOrders: AdminOrders,
+  adminOrdersLength: number,
+  adminOrders: AdminOrderEntity[] | null,
 }
 
 type FiltersLoaded = any
@@ -166,10 +162,8 @@ const initialState: AdminOrdersState = {
 
   adminOrdersLoading: false,
   adminOrdersError: null,
-  adminOrders: {
-    totalLen: 0,
-    data: [],
-  },
+  adminOrdersLength: 0,
+  adminOrders: [],
 }
 
 const adminOrders = createSlice({
@@ -206,6 +200,17 @@ const adminOrders = createSlice({
       state.adminOrdersLoading = true;
       state.adminOrdersError = null;
     },
+    fetchAdminOrdersSuccess(state, action: PayloadAction<{
+      totalLen: number,
+      data: AdminOrderEntity[] | null,
+    }>) {
+      const { totalLen, data } = action.payload;
+
+      state.adminOrdersLength = totalLen;
+      state.adminOrders = data;
+      state.adminOrdersLoading = false;
+      state.adminOrdersError = null;
+    },
   }
 });
 
@@ -216,6 +221,7 @@ export const {
   updateSelectedFilters,
   resetSelectedFilters,
   fetchAdminOrdersStart,
+  fetchAdminOrdersSuccess,
 } = adminOrders.actions;
 export default adminOrders.reducer;
 
@@ -252,7 +258,12 @@ export const fetchAdminOrders = (selectedFilters: SelectedFilters): AppThunk => 
   try {
     dispatch(fetchAdminOrdersStart());
 
-    const { data } = await getAdminOrders(selectedFilters);
+    const data = await getAdminOrders(selectedFilters);
+
+    dispatch(fetchAdminOrdersSuccess({
+      totalLen: data.totalLen,
+      data: data.data,
+    }));
   } catch (err) {
     console.log(err, '__ERROR__');
   }

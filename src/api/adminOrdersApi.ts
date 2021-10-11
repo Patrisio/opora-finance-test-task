@@ -51,6 +51,6 @@ export async function getOperationTypeList() {
 export async function getAdminOrders(selectedFilters: SelectedFilters) {
   const url = `/order/fetch_admin_orders`;
 
-  const { data } = await api.post<SelectedFilters>(url, selectedFilters);
+  const { data } = await api.post<any>(url, selectedFilters);
   return data;
 }
