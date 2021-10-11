@@ -1,6 +1,6 @@
 import React from 'react';
 import Paper from '@mui/material/Paper';
-import { Table as MaterialTable }from '@mui/material';
+import { Table as MaterialTable } from '@mui/material';
 import { Typography } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -45,7 +45,7 @@ export default function Table({ columns, rows, isLoading }: TableProps) {
           hover
           role='checkbox'
           tabIndex={-1}
-          key={row.code}
+          key={row.orderID}
         >
           {columns.map((column) => {
             const value = row[column.id];

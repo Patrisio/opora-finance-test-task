@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
+import { AxiosError } from 'axios';
 import {
   getStatusGroupsFilter, getStatusGroupsUse,
   getCurrencyList, getOperationTypeList,
@@ -218,6 +218,10 @@ const adminOrders = createSlice({
       state.adminOrdersLoading = false;
       state.adminOrdersError = null;
     },
+    fetchAdminOrdersFailure(state, action: PayloadAction<string>) {
+      state.adminOrdersLoading = false;
+      state.adminOrdersError = action.payload;
+    },
   }
 });
 
@@ -229,6 +233,7 @@ export const {
   resetSelectedFilters,
   fetchAdminOrdersStart,
   fetchAdminOrdersSuccess,
+  fetchAdminOrdersFailure,
 } = adminOrders.actions;
 export default adminOrders.reducer;
 
@@ -257,7 +262,12 @@ export const fetchFilters = (): AppThunk => async (dispatch: any) => {
       currencyID: currencyList,
     }));
   } catch (err) {
-    // dispatch(fetchFiltersFailure(err));
+    const error = err as any;
+    const response: any = error.response;
+
+    if (response) {
+      dispatch(fetchFiltersFailure(response.data.message));
+    }
   }
 };
 
@@ -272,6 +282,11 @@ export const fetchAdminOrders = (selectedFilters: SelectedFilters): AppThunk => 
       data: data.data,
     }));
   } catch (err) {
-    console.log(err, '__ERROR__');
+    const error = err as AxiosError;
+    const response: any = error.response;
+
+    if (response) {
+      dispatch(fetchAdminOrdersFailure(response.data.message));
+    }
   }
 };

@@ -52,9 +52,8 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
     switch (filter.type) {
       case 'input':
         return (
-          <Grid item xs={2}>
+          <Grid item xs={2} key={filter.filterName}>
             <Input
-              key={filter.filterName}
               label={filter.label}
               value={selectedFilters[filter.filterName] as string}
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -71,9 +70,8 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
         );
       case 'select':
         return (
-          <Grid item xs={2}>
+          <Grid item xs={2} key={filter.filterName}>
             <Select
-              key={filter.filterName}
               options={filter.options as Option[]}
               label={filter.label}
               value={selectedFilters[filter.filterName] as string}
@@ -87,9 +85,8 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
         );
       case 'multiselect':
         return (
-          <Grid item xs={3}>
+          <Grid item xs={3} key={filter.filterName}>
             <MultiSelect
-              key={filter.filterName}
               options={filter.options as Option[]}
               label={filter.label}
               value={getFilterValue(selectedFilters[filter.filterName] as number[], filter.options as Option[]) as string[]}
@@ -105,9 +102,8 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
       case 'date':
         const getDatePickerValue = (value: number | null) => value ? value * 1000 : null; 
         return (
-          <Grid item xs={2}>
+          <Grid item xs={2} key={filter.filterName}>
             <Datepicker
-              key={filter.filterName}
               onChange={(date: Date | null) => {
                 const timestamp = date ? convertDateToTimestamp(String(date)) : null;
                 handleChange(filter.filterName, timestamp);

@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 import Container from '@mui/material/Container';
 import { TablePagination as Pagination } from '@mui/material';
+import Alert from '@mui/material/Alert';
 
 import Filters from './components/Filters';
 import Table, { Column } from './components/Table';
@@ -17,7 +18,7 @@ import './App.css';
 export default function App() {
   const {
     filters, selectedFilters, adminOrdersLoading,
-    adminOrdersLength, adminOrders,
+    adminOrdersLength, adminOrders, filtersError, adminOrdersError,
   } = useTypedSelector(state => state.adminOrdersSlice);
   const {
     fetchFilters, resetSelectedFilters,
@@ -36,6 +37,11 @@ export default function App() {
   const handlePageChange = (event: unknown, newPage: number) => {
     updatePageNumber(newPage);
     updateSelectedFilters({ offset: newPage * selectedFilters.limit });
+  };
+
+  const renderAlert = () => {
+    const errorMessage = filtersError || adminOrdersError;
+    return errorMessage && <Alert severity='error'>{ errorMessage }</Alert>;
   };
 
   const columns: Column[] = [
@@ -92,7 +98,13 @@ export default function App() {
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom component="div">
+      { renderAlert() }
+
+      <Typography
+        variant='h4'
+        gutterBottom
+        component='div'
+      >
         Список заявок транзакций
       </Typography>
 
