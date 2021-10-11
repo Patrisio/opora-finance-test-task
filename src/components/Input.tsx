@@ -23,7 +23,7 @@ export default function Input({ value, ...restProps }: InputProps) {
       <TextField
         variant='outlined'
         value={value || ''}
-        { ..restProps }
+        { ...restProps }
       />
     </Box>
   );
