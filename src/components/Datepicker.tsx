@@ -11,15 +11,12 @@ type DatepickerProps = {
   onChange: (date: Date | null) => void,
 };
 
-export default function Datepicker({ label, value, disabled, onChange }: DatepickerProps) {
+export default function Datepicker(props: DatepickerProps) {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DatePicker
-        label={label}
-        value={value}
-        disabled={disabled}
-        onChange={onChange}
         renderInput={(params: any) => <TextField {...params} />}
+        { ...props }
       />
     </LocalizationProvider>
   );

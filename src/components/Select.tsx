@@ -27,10 +27,8 @@ export default function Select({ options, label, value, readOnly, onChange }: Se
   return (
     <Box sx={{ m: .5 }}>
       <FormControl fullWidth>
-        <InputLabel id='demo-simple-select-label'>{ label }</InputLabel>
+        <InputLabel>{ label }</InputLabel>
         <MaterialSelect
-          labelId='demo-simple-select-label'
-          id='demo-simple-select'
           label={label}
           value={value || ''}
           onChange={onChange}

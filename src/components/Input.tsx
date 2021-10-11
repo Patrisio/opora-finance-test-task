@@ -10,7 +10,7 @@ type InputProps = {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void,
 };
 
-export default function Input({ label, value, disabled, type, onChange }: InputProps) {
+export default function Input({ value, ...restProps }: InputProps) {
   return (
     <Box
       component='form'
@@ -21,13 +21,9 @@ export default function Input({ label, value, disabled, type, onChange }: InputP
       autoComplete='off'
     >
       <TextField
-        id='outlined-basic'
-        label={label}
         variant='outlined'
         value={value || ''}
-        onChange={onChange}
-        disabled={disabled}
-        type={type}
+        { ..restProps }
       />
     </Box>
   );

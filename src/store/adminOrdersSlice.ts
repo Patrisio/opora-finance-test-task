@@ -60,15 +60,14 @@ type AdminOrdersState = {
   adminOrders: AdminOrderEntity[] | null,
 }
 
-type FiltersLoaded = any
-// {
-//   [key: string]: StatusGroups[] | AdminOrdersFilterData[],
+type FiltersLoaded = {
+  [key: string]: StatusGroups[] | AdminOrdersFilterData[],
   
-//   statusGroupList: StatusGroups[],
-//   toChangeStatusGroupID: StatusGroups[],
-//   operationTypeID: AdminOrdersFilterData[],
-//   currencyID: AdminOrdersFilterData[],
-// }
+  statusGroupList: StatusGroups[],
+  toChangeStatusGroupID: StatusGroups[],
+  operationTypeID: AdminOrdersFilterData[],
+  currencyID: AdminOrdersFilterData[],
+}
 
 const sortingOptions: Option[] = [
   {

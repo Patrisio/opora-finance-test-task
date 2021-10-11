@@ -29,15 +29,13 @@ export default function MultiSelect({ options, label, value, readOnly, onChange 
   return (
     <div>
       <FormControl sx={{ m: .5, width: '100%' }}>
-        <InputLabel id="demo-multiple-chip-label">{ label }</InputLabel>
+        <InputLabel>{ label }</InputLabel>
         <Select
-          labelId="demo-multiple-chip-label"
-          id="demo-multiple-chip"
           multiple
           value={value}
           inputProps={{ readOnly }}
           onChange={onChange}
-          input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+          input={<OutlinedInput label="Chip" />}
           renderValue={(selected) => (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {selected.map((value) => {
