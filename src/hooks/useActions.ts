@@ -6,6 +6,8 @@ import {
   fetchFiltersFailure,
   fetchFilters,
   updateSelectedFilters,
+  resetSelectedFilters,
+  fetchAdminOrders,
 } from '../store/adminOrdersSlice';
 
 export const useActions = () => {
@@ -16,5 +18,7 @@ export const useActions = () => {
     fetchFiltersFailure,
     fetchFilters,
     updateSelectedFilters,
+    resetSelectedFilters,
+    fetchAdminOrders,
   }, dispatch);
 }

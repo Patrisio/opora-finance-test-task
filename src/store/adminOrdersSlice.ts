@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   getStatusGroupsFilter, getStatusGroupsUse,
   getCurrencyList, getOperationTypeList,
+  getAdminOrders,
   StatusGroups, AdminOrdersFilterData,
 } from '../api/adminOrdersApi';
 import { AppThunk } from '.';
@@ -10,7 +11,7 @@ import { Filter, Option } from '../types';
 
 type OrderByFilter = 'updated_at_DESC' | 'updated_at_ASC' | 'created_at_DESC' | 'created_at_ASC';
 
-type SelectedFilters = {
+export type SelectedFilters = {
   [key: string]: string | number | number[] | null,
 
   publicID: string | null,
@@ -26,18 +27,41 @@ type SelectedFilters = {
 	walletID: string | null,
 	userID: string | null,
 	statusGroupList: number[],
-	toChangeStatusGroupID: number,
+	toChangeStatusGroupID: number | null,
 	userPrivateName: string | null,
 	orderBy: OrderByFilter | null,
 };
 
 type SelectedFiltersKeys = Partial<keyof SelectedFilters>;
 
+type AdminOrderEntity = {
+  orderID: number,
+  publicID: string,
+  createdDate: number,
+  orderType: string,
+  direction: string,
+  statusName: string,
+  percentage: number | null,
+  amount: number,
+  meetTime: number,
+  city: string,
+  userPrivateName: string,
+  type: string,
+};
+
+type AdminOrders = {
+  totalLen: number,
+  data: AdminOrderEntity[],
+};
+
 type AdminOrdersState = {
   filters: Filter[],
   selectedFilters: SelectedFilters,
-  loading: boolean
-  error: string | null
+  filtersLoading: boolean,
+  filtersError: string | null,
+  adminOrdersLoading: boolean,
+  adminOrdersError: string | null,
+  adminOrders: AdminOrders,
 }
 
 type FiltersLoaded = any
@@ -83,7 +107,7 @@ const defaultSelectedFilters: SelectedFilters = {
 	walletID: null,
 	userID: null,
 	statusGroupList: [],
-	toChangeStatusGroupID: 4,
+	toChangeStatusGroupID: null,
 	userPrivateName: null,
 	orderBy: null
 };
@@ -133,12 +157,19 @@ const initialState: AdminOrdersState = {
     {
       type: 'date',
       filterName: 'timeTo',
-      label: 'Валюта до',
+      label: 'Время до',
     },
   ],
   selectedFilters: defaultSelectedFilters,
-  loading: false,
-  error: null,
+  filtersLoading: false,
+  filtersError: null,
+
+  adminOrdersLoading: false,
+  adminOrdersError: null,
+  adminOrders: {
+    totalLen: 0,
+    data: [],
+  },
 }
 
 const adminOrders = createSlice({
@@ -146,8 +177,8 @@ const adminOrders = createSlice({
   initialState,
   reducers: {
     fetchFiltersStart(state) {
-      state.loading = true;
-      state.error = null;
+      state.filtersLoading = true;
+      state.filtersError = null;
     },
     fetchFiltersSuccess(state, action: PayloadAction<FiltersLoaded>) {
       const payload = action.payload;
@@ -158,15 +189,22 @@ const adminOrders = createSlice({
         }
       }
 
-      state.loading = false;
-      state.error = null;
+      state.filtersLoading = false;
+      state.filtersError = null;
     },
     fetchFiltersFailure(state, action: PayloadAction<string>) {
-      state.loading = false;
-      state.error = action.payload;
+      state.filtersLoading = false;
+      state.filtersError = action.payload;
     },
-    updateSelectedFilters(state, action: PayloadAction<Record<string, string | number | number[]>>) {
+    updateSelectedFilters(state, action: PayloadAction<Record<string, string | number | number[] | null>>) {
       state.selectedFilters = Object.assign(state.selectedFilters, action.payload);
+    },
+    resetSelectedFilters(state) {
+      state.selectedFilters = defaultSelectedFilters;
+    },
+    fetchAdminOrdersStart(state) {
+      state.adminOrdersLoading = true;
+      state.adminOrdersError = null;
     },
   }
 });
@@ -176,6 +214,8 @@ export const {
   fetchFiltersSuccess,
   fetchFiltersFailure,
   updateSelectedFilters,
+  resetSelectedFilters,
+  fetchAdminOrdersStart,
 } = adminOrders.actions;
 export default adminOrders.reducer;
 
@@ -206,4 +246,14 @@ export const fetchFilters = (): AppThunk => async (dispatch: any) => {
   } catch (err) {
     // dispatch(fetchFiltersFailure(err));
   }
-}
+};
+
+export const fetchAdminOrders = (selectedFilters: SelectedFilters): AppThunk => async (dispatch: any) => {
+  try {
+    dispatch(fetchAdminOrdersStart());
+
+    const { data } = await getAdminOrders(selectedFilters);
+  } catch (err) {
+    console.log(err, '__ERROR__');
+  }
+};

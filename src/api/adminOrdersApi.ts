@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { SelectedFilters } from '../store/adminOrdersSlice';
 
 const productionHost = 'http://135.181.39.55:15551';
 
@@ -44,5 +45,12 @@ export async function getOperationTypeList() {
   const url = `/list/fetch_operation_type_list`;
 
   const { data } = await api.get<AdminOrdersFilterData[]>(url);
+  return data;
+}
+
+export async function getAdminOrders(selectedFilters: SelectedFilters) {
+  const url = `/order/fetch_admin_orders`;
+
+  const { data } = await api.post<SelectedFilters>(url, selectedFilters);
   return data;
 }

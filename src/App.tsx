@@ -9,7 +9,7 @@ import './App.css';
 
 export default function App() {
   const { filters } = useTypedSelector(state => state.adminOrdersSlice);
-  const { fetchFilters } = useActions();
+  const { fetchFilters, resetSelectedFilters, fetchAdminOrders } = useActions();
 
   useEffect(() => {
     fetchFilters();
@@ -18,7 +18,11 @@ export default function App() {
   return (
     <Container>
       <Box sx={{ flexWrap: 'wrap' }}>
-        <Filters filters={filters} />
+        <Filters
+          filters={filters}
+          getData={fetchAdminOrders}
+          resetFilters={resetSelectedFilters}
+        />
       </Box>
     </Container>
   );

@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
 import { SelectChangeEvent } from '@mui/material';
 import Select from './Select';
 import MultiSelect from './MultiSelect';
@@ -10,16 +11,19 @@ import { Filter, Option } from '../types';
 import { useActions } from '../hooks/useActions';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import { convertDateToTimestamp } from '../utils';
+import { SelectedFilters } from '../store/adminOrdersSlice';
 
 type FiltersProps = {
   filters: Filter[],
+  getData: any,//(selectedFilters: SelectedFilters) => void,
+  resetFilters: () => void,
 };
 
-export default function Filters({ filters }: FiltersProps) {
+export default function Filters({ filters, getData, resetFilters }: FiltersProps) {
   const { selectedFilters } = useTypedSelector(state => state.adminOrdersSlice);
   const { updateSelectedFilters } = useActions();
 
-  const handleChange = (filterName: string, value: string | number | number[]) => {
+  const handleChange = (filterName: string, value: string | number | number[] | null) => {
     updateSelectedFilters({ [filterName]: value });
   };
 
@@ -92,8 +96,7 @@ export default function Filters({ filters }: FiltersProps) {
             <Datepicker
               key={filter.filterName}
               onChange={(date: Date | null) => {
-                console.log(date, '__DATE__');
-                const timestamp = convertDateToTimestamp(String(date));
+                const timestamp = date ? convertDateToTimestamp(String(date)) : null;
                 handleChange(filter.filterName, timestamp);
               }}
               label={filter.label}
@@ -105,12 +108,27 @@ export default function Filters({ filters }: FiltersProps) {
   };
 
   return (
-    // <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-    //   { filters.map(filter => renderFilter(filter)) }
-    // </Box>
     <Box sx={{ flexGrow: 1 }}>
-      <Grid container spacing={2}>
+      <Grid container spacing={2} sx={{ alignItems: 'center' }}>
         { filters.map(filter => renderFilter(filter)) }
+
+        <Grid item xs={2}>
+          <Button
+            variant='contained'
+            onClick={() => getData(selectedFilters)}
+          >
+            Получить данные
+          </Button>
+        </Grid>
+
+        <Grid item xs={2}>
+          <Button
+            variant='contained'
+            onClick={resetFilters}
+          >
+            Сбросить фильтры
+          </Button>
+        </Grid>
       </Grid>
     </Box>
   );
