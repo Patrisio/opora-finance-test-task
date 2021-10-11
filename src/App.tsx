@@ -1,19 +1,42 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, ChangeEvent } from 'react';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 import Container from '@mui/material/Container';
+import { TablePagination as Pagination } from '@mui/material';
 
 import Filters from './components/Filters';
 import Table, { Column } from './components/Table';
 
 import { useActions } from'./hooks/useActions';
 import { useTypedSelector } from './hooks/useTypedSelector';
+import { convertTimestampToDate } from './utils';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_ROWS_PER_PAGE } from './constants';
 
 import './App.css';
 
 export default function App() {
-  const { filters, adminOrders } = useTypedSelector(state => state.adminOrdersSlice);
-  const { fetchFilters, resetSelectedFilters, fetchAdminOrders } = useActions();
+  const {
+    filters, selectedFilters,
+    adminOrdersLength, adminOrders,
+  } = useTypedSelector(state => state.adminOrdersSlice);
+  const {
+    fetchFilters, resetSelectedFilters,
+    updateSelectedFilters, fetchAdminOrders,
+  } = useActions();
+  const [pageNumber, updatePageNumber] = useState<number>(DEFAULT_PAGE_NUMBER);
+
+  const handleRowPerPageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    updateSelectedFilters({
+      limit: +event.target.value,
+      offset: 0,
+    });
+    updatePageNumber(DEFAULT_PAGE_NUMBER);
+  };
+
+  const handlePageChange = (event: unknown, newPage: number) => {
+    updatePageNumber(newPage);
+    updateSelectedFilters({ offset: newPage * selectedFilters.limit });
+  };
 
   const columns: Column[] = [
     {
@@ -25,6 +48,7 @@ export default function App() {
       id: 'createdDate',
       label: 'Время создания',
       minWidth: 100,
+      format: (value: number) => convertTimestampToDate(value),
     },
     {
       id: 'orderType',
@@ -62,6 +86,10 @@ export default function App() {
     fetchFilters();
   }, []);
 
+  useEffect(() => {
+    fetchAdminOrders(selectedFilters);
+  }, [selectedFilters.limit, selectedFilters.offset]);
+
   return (
     <Container>
       <Typography variant="h4" gutterBottom component="div">
@@ -78,13 +106,17 @@ export default function App() {
 
       <Table
         columns={columns}
-        pagination={{
-          rowsPerPage: 10,
-          page: 1,
-        }}
         rows={adminOrders}
-        onPageChange={() => {}}
-        onRowsPerPageChange={() => {}}
+      />
+
+      <Pagination
+        rowsPerPageOptions={DEFAULT_ROWS_PER_PAGE}
+        component='div'
+        count={adminOrdersLength}
+        rowsPerPage={selectedFilters.limit}
+        page={pageNumber}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handleRowPerPageChange}
       />
     </Container>
   );

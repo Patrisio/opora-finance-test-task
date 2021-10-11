@@ -5,54 +5,50 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 
 export type Column = {
   id: string;
   label: string;
   minWidth?: number;
-};
-
-type Pagination = {
-  page: number,
-  rowsPerPage: number,
+  format?: (value: number) => string,
 };
 
 type TableProps = {
   columns: Column[],
-  pagination: Pagination,
   rows: any,
-  onPageChange: any,
-  onRowsPerPageChange: any,
 };
 
-export default function Table({
-  columns, pagination, rows,
-  onPageChange, onRowsPerPageChange,
-}: TableProps) {
-  const { page, rowsPerPage } = pagination;
-
+export default function Table({ columns, rows }: TableProps) {
   const tableColumns = columns.map((column) => (
     <TableCell
       key={column.id}
-      // align={column.align}
       style={{ minWidth: column.minWidth }}
     >
       {column.label}
     </TableCell>
   ));
 
+  const getTableCellValue = (column: Column, value: string | number) => {
+    return column.format && typeof value === 'number'
+      ? column.format(value * 1000)
+      : value;
+  };
+
   const tableRows = rows
-    .slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
     .map((row: any) => {
       return (
-        <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+        <TableRow
+          hover
+          role='checkbox'
+          tabIndex={-1}
+          key={row.code}
+        >
           {columns.map((column) => {
             const value = row[column.id];
             return (
               <TableCell key={column.id}>
-                { value }
+                { getTableCellValue(column, value) }
               </TableCell>
             );
           })}
@@ -62,7 +58,7 @@ export default function Table({
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
+      <TableContainer sx={{ maxHeight: 800 }}>
         <MaterialTable stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -75,16 +71,6 @@ export default function Table({
           </TableBody>
         </MaterialTable>
       </TableContainer>
-
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component='div'
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={onPageChange}
-        onRowsPerPageChange={onRowsPerPageChange}
-      />
     </Paper>
   );
 }

@@ -72,19 +72,19 @@ type FiltersLoaded = any
 
 const sortingOptions: Option[] = [
   {
-    ID: 'updated_at_DESC',
+    ID: 'updated_at_ASC',
     name: 'Сортировать по дате оновления от старых к новым',
   },
   {
-    ID: 'updated_at_ASC',
+    ID: 'updated_at_DESC',
     name: 'Сортировать по дате оновления от новыx к старым',
   },
   {
-    ID: 'created_at_DESC',
+    ID: 'created_at_ASC',
     name: 'Сортировать по дате создания от старых к новым',
   },
   {
-    ID: 'created_at_ASC',
+    ID: 'created_at_DESC',
     name: 'Сортировать по дате создания от новыx к старым',
   },
 ];
@@ -96,7 +96,7 @@ const defaultSelectedFilters: SelectedFilters = {
 	currencyID: null,
 	operationTypeID: null,
 	nearAmount: null,
-	limit: 100,
+	limit: 10,
 	offset: 0,
 	currencyFromID: null,
 	currencyToID: null,
