@@ -7,15 +7,17 @@ import DatePicker from '@mui/lab/DatePicker';
 type DatepickerProps = {
   label: string,
   value: Date | null,
+  disabled?: boolean,
   onChange: (date: Date | null) => void,
 };
 
-export default function Datepicker({ label, value, onChange }: DatepickerProps) {
+export default function Datepicker({ label, value, disabled, onChange }: DatepickerProps) {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DatePicker
         label={label}
         value={value}
+        disabled={disabled}
         onChange={onChange}
         renderInput={(params: any) => <TextField {...params} />}
       />

@@ -106,7 +106,7 @@ export default function App() {
 
       <Table
         columns={columns}
-        rows={adminOrders}
+        rows={adminOrders || []}
       />
 
       <Pagination

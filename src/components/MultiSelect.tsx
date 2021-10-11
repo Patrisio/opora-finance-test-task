@@ -12,10 +12,11 @@ type MultiSelectProps = {
   options: Option[],
   label: string,
   value: string[],
+  readOnly?: boolean,
   onChange: (event: SelectChangeEvent<string[]>) => void,
 };
 
-export default function MultiSelect({ options, label, value, onChange }: MultiSelectProps) {
+export default function MultiSelect({ options, label, value, readOnly, onChange }: MultiSelectProps) {
   const menuItems = options.map(({ ID, name }) => (
     <MenuItem
       key={ID}
@@ -34,6 +35,7 @@ export default function MultiSelect({ options, label, value, onChange }: MultiSe
           id="demo-multiple-chip"
           multiple
           value={value}
+          inputProps={{ readOnly }}
           onChange={onChange}
           input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
           renderValue={(selected) => (

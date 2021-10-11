@@ -3,13 +3,16 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { SelectChangeEvent } from '@mui/material';
+
 import Select from './Select';
 import MultiSelect from './MultiSelect';
 import Input from './Input';
 import Datepicker from './Datepicker';
-import { Filter, Option } from '../types';
+
 import { useActions } from '../hooks/useActions';
 import { useTypedSelector } from '../hooks/useTypedSelector';
+
+import { Filter, Option } from '../types';
 import { convertDateToTimestamp } from '../utils';
 import { SelectedFilters } from '../store/adminOrdersSlice';
 
@@ -20,8 +23,10 @@ type FiltersProps = {
 };
 
 export default function Filters({ filters, getData, resetFilters }: FiltersProps) {
-  const { selectedFilters } = useTypedSelector(state => state.adminOrdersSlice);
+  const { selectedFilters, adminOrdersLoading, filtersLoading } = useTypedSelector(state => state.adminOrdersSlice);
   const { updateSelectedFilters } = useActions();
+
+  const isDisabled = filtersLoading || adminOrdersLoading;
 
   const handleChange = (filterName: string, value: string | number | number[] | null) => {
     updateSelectedFilters({ [filterName]: value });
@@ -56,6 +61,7 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
                 const value = event.target.value;
                 handleChange(filter.filterName, value);
               }}
+              disabled={isDisabled}
             />
           </Grid>
         );
@@ -71,6 +77,7 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
                 const selectedValue = event.target.value;
                 handleChange(filter.filterName, selectedValue)
               }}
+              readOnly={isDisabled}
             />
           </Grid>
         );
@@ -87,6 +94,7 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
                 const selectedValues: number[] = values.map(selectedValue => JSON.parse(selectedValue).ID);
                 handleChange(filter.filterName, selectedValues);
               }}
+              readOnly={isDisabled}
             />
           </Grid>
         );
@@ -101,6 +109,7 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
               }}
               label={filter.label}
               value={selectedFilters[filter.filterName] as Date | null}
+              disabled={isDisabled}
             />
           </Grid>
         );
@@ -116,6 +125,7 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
           <Button
             variant='contained'
             onClick={() => getData(selectedFilters)}
+            disabled={isDisabled}
           >
             Получить данные
           </Button>
@@ -125,6 +135,7 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
           <Button
             variant='contained'
             onClick={resetFilters}
+            disabled={isDisabled}
           >
             Сбросить фильтры
           </Button>

@@ -10,10 +10,11 @@ type SelectProps = {
   options: Option[],
   label: string,
   value: string | number,
+  readOnly?: boolean,
   onChange: (event: SelectChangeEvent<string | number>) => void,
 };
 
-export default function Select({ options, label, value, onChange }: SelectProps) {
+export default function Select({ options, label, value, readOnly, onChange }: SelectProps) {
   const menuItems = options.map(({ ID, name }) => (
     <MenuItem
       key={ID}
@@ -33,6 +34,7 @@ export default function Select({ options, label, value, onChange }: SelectProps)
           label={label}
           value={value || ''}
           onChange={onChange}
+          inputProps={{ readOnly }}
         >
           { menuItems }
         </MaterialSelect>

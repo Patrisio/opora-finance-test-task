@@ -5,10 +5,11 @@ import TextField from '@mui/material/TextField';
 type InputProps = {
   label: string,
   value: string,
+  disabled?: boolean,
   onChange: (event: ChangeEvent<HTMLInputElement>) => void,
 };
 
-export default function Input({ label, value, onChange }: InputProps) {
+export default function Input({ label, value, disabled, onChange }: InputProps) {
   return (
     <Box
       component='form'
@@ -24,6 +25,7 @@ export default function Input({ label, value, onChange }: InputProps) {
         variant='outlined'
         value={value || ''}
         onChange={onChange}
+        disabled={disabled}
       />
     </Box>
   );
