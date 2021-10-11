@@ -11,4 +11,5 @@ export type Filter = {
   filterName: string,
   label: string,
   options?: Option[],
+  inputType?: 'text' | 'number',
 };

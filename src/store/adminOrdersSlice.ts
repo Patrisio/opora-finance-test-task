@@ -15,8 +15,8 @@ export type SelectedFilters = {
   [key: string]: string | number | number[] | null,
 
   publicID: string | null,
-	timeFrom: string | null,
-	timeTo: string | null,
+	timeFrom: number | null,
+	timeTo: number | null,
 	currencyID: string | null,
 	operationTypeID: string | null,
 	nearAmount: number | null,
@@ -132,6 +132,7 @@ const initialState: AdminOrdersState = {
       type: 'input',
       filterName: 'publicID',
       label: 'ID заявки',
+      inputType: 'text',
     },
     {
       type: 'select',
@@ -144,6 +145,12 @@ const initialState: AdminOrdersState = {
       filterName: 'currencyID',
       label: 'Валюта',
       options: [],
+    },
+    {
+      type: 'input',
+      filterName: 'nearAmount',
+      label: 'Объем',
+      inputType: 'number',
     },
     {
       type: 'date',

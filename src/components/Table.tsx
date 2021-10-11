@@ -1,11 +1,13 @@
 import React from 'react';
 import Paper from '@mui/material/Paper';
 import { Table as MaterialTable }from '@mui/material';
+import { Typography } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export type Column = {
   id: string;
@@ -17,9 +19,10 @@ export type Column = {
 type TableProps = {
   columns: Column[],
   rows: any,
+  isLoading?: boolean,
 };
 
-export default function Table({ columns, rows }: TableProps) {
+export default function Table({ columns, rows, isLoading }: TableProps) {
   const tableColumns = columns.map((column) => (
     <TableCell
       key={column.id}
@@ -35,8 +38,8 @@ export default function Table({ columns, rows }: TableProps) {
       : value;
   };
 
-  const tableRows = rows
-    .map((row: any) => {
+  const tableRows = rows.length > 0 ?
+    rows.map((row: any) => {
       return (
         <TableRow
           hover
@@ -54,7 +57,14 @@ export default function Table({ columns, rows }: TableProps) {
           })}
         </TableRow>
       );
-    });
+    }) :
+    <Typography
+      variant='h6'
+      gutterBottom
+      component='div'
+    >
+      Нет данных
+    </Typography>;
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -67,7 +77,7 @@ export default function Table({ columns, rows }: TableProps) {
           </TableHead>
 
           <TableBody>
-            { tableRows }
+            { isLoading ? <CircularProgress /> : tableRows }
           </TableBody>
         </MaterialTable>
       </TableContainer>

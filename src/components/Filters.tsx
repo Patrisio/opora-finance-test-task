@@ -52,16 +52,20 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
     switch (filter.type) {
       case 'input':
         return (
-          <Grid item xs={3}>
+          <Grid item xs={2}>
             <Input
               key={filter.filterName}
               label={filter.label}
               value={selectedFilters[filter.filterName] as string}
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 const value = event.target.value;
-                handleChange(filter.filterName, value);
+                const formattedValue = filter.inputType === 'number' ?
+                  !!Number(value) ? Number(value) : null :
+                  value;
+                handleChange(filter.filterName, formattedValue);
               }}
               disabled={isDisabled}
+              type={filter.inputType as 'number' | 'text'}
             />
           </Grid>
         );
@@ -99,6 +103,7 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
           </Grid>
         );
       case 'date':
+        const getDatePickerValue = (value: number | null) => value ? value * 1000 : null; 
         return (
           <Grid item xs={2}>
             <Datepicker
@@ -108,7 +113,7 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
                 handleChange(filter.filterName, timestamp);
               }}
               label={filter.label}
-              value={selectedFilters[filter.filterName] as Date | null}
+              value={getDatePickerValue(selectedFilters[filter.filterName] as number | null) as any}
               disabled={isDisabled}
             />
           </Grid>

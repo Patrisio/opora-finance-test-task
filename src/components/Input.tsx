@@ -6,10 +6,11 @@ type InputProps = {
   label: string,
   value: string,
   disabled?: boolean,
+  type: 'text' | 'number',
   onChange: (event: ChangeEvent<HTMLInputElement>) => void,
 };
 
-export default function Input({ label, value, disabled, onChange }: InputProps) {
+export default function Input({ label, value, disabled, type, onChange }: InputProps) {
   return (
     <Box
       component='form'
@@ -26,6 +27,7 @@ export default function Input({ label, value, disabled, onChange }: InputProps) 
         value={value || ''}
         onChange={onChange}
         disabled={disabled}
+        type={type}
       />
     </Box>
   );

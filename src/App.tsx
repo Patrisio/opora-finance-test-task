@@ -16,7 +16,7 @@ import './App.css';
 
 export default function App() {
   const {
-    filters, selectedFilters,
+    filters, selectedFilters, adminOrdersLoading,
     adminOrdersLength, adminOrders,
   } = useTypedSelector(state => state.adminOrdersSlice);
   const {
@@ -107,6 +107,7 @@ export default function App() {
       <Table
         columns={columns}
         rows={adminOrders || []}
+        isLoading={adminOrdersLoading}
       />
 
       <Pagination
