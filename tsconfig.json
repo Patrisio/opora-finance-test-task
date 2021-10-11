@@ -10,6 +10,7 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
+    "strictBindCallApply": false,
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,

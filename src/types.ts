@@ -1,7 +1,7 @@
 type FilterType = 'input' | 'select' | 'multiselect' | 'date';
 
 export type Option = {
-  ID: number,
+  ID: number | string,
   name: string,
   color?: string,
 };

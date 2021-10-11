@@ -1,22 +1,25 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import Box from '@mui/material/Box';
+
 import { useTypedSelector } from './hooks/useTypedSelector';
 import Container from '@mui/material/Container';
 import Filters from './components/Filters';
-import { fetchFilters } from './store/adminOrdersSlice';
+import { useActions } from'./hooks/useActions';
 import './App.css';
 
 export default function App() {
-  const dispatch = useDispatch();
   const { filters } = useTypedSelector(state => state.adminOrdersSlice);
-  
+  const { fetchFilters } = useActions();
+
   useEffect(() => {
-    dispatch(fetchFilters());
-  }, [dispatch]);
+    fetchFilters();
+  }, []);
 
   return (
     <Container>
-      <Filters filters={filters} />
+      <Box sx={{ flexWrap: 'wrap' }}>
+        <Filters filters={filters} />
+      </Box>
     </Container>
   );
 }

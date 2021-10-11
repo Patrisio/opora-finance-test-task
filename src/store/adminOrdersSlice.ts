@@ -6,10 +6,36 @@ import {
   StatusGroups, AdminOrdersFilterData,
 } from '../api/adminOrdersApi';
 import { AppThunk } from '.';
-import { Filter } from '../types';
+import { Filter, Option } from '../types';
 
-interface AdminOrdersState {
-  filters: Filter[],  
+type OrderByFilter = 'updated_at_DESC' | 'updated_at_ASC' | 'created_at_DESC' | 'created_at_ASC';
+
+type SelectedFilters = {
+  [key: string]: string | number | number[] | null,
+
+  publicID: string | null,
+	timeFrom: string | null,
+	timeTo: string | null,
+	currencyID: string | null,
+	operationTypeID: string | null,
+	nearAmount: number | null,
+	limit: number,
+	offset: number,
+	currencyFromID: string | null,
+	currencyToID: string | null,
+	walletID: string | null,
+	userID: string | null,
+	statusGroupList: number[],
+	toChangeStatusGroupID: number,
+	userPrivateName: string | null,
+	orderBy: OrderByFilter | null,
+};
+
+type SelectedFiltersKeys = Partial<keyof SelectedFilters>;
+
+type AdminOrdersState = {
+  filters: Filter[],
+  selectedFilters: SelectedFilters,
   loading: boolean
   error: string | null
 }
@@ -24,17 +50,55 @@ type FiltersLoaded = any
 //   currencyID: AdminOrdersFilterData[],
 // }
 
+const sortingOptions: Option[] = [
+  {
+    ID: 'updated_at_DESC',
+    name: 'Сортировать по дате оновления от старых к новым',
+  },
+  {
+    ID: 'updated_at_ASC',
+    name: 'Сортировать по дате оновления от новыx к старым',
+  },
+  {
+    ID: 'created_at_DESC',
+    name: 'Сортировать по дате создания от старых к новым',
+  },
+  {
+    ID: 'created_at_ASC',
+    name: 'Сортировать по дате создания от новыx к старым',
+  },
+];
+
+const defaultSelectedFilters: SelectedFilters = {
+	publicID: null,
+	timeFrom: null,
+	timeTo: null,
+	currencyID: null,
+	operationTypeID: null,
+	nearAmount: null,
+	limit: 100,
+	offset: 0,
+	currencyFromID: null,
+	currencyToID: null,
+	walletID: null,
+	userID: null,
+	statusGroupList: [],
+	toChangeStatusGroupID: 4,
+	userPrivateName: null,
+	orderBy: null
+};
+
 const initialState: AdminOrdersState = {
   filters: [
     {
       type: 'select',
-      filterName: 'statusGroupList',
+      filterName: 'toChangeStatusGroupID',
       label: 'Выбор статуса',
       options: [],
     },
     {
       type: 'multiselect',
-      filterName: 'toChangeStatusGroupID',
+      filterName: 'statusGroupList',
       label: 'Добавить теги',
       options: [],
     },
@@ -42,7 +106,7 @@ const initialState: AdminOrdersState = {
       type: 'select',
       filterName: 'orderBy',
       label: 'Сортировка',
-      options: [],
+      options: sortingOptions,
     },
     {
       type: 'input',
@@ -61,7 +125,18 @@ const initialState: AdminOrdersState = {
       label: 'Валюта',
       options: [],
     },
+    {
+      type: 'date',
+      filterName: 'timeFrom',
+      label: 'Время от',
+    },
+    {
+      type: 'date',
+      filterName: 'timeTo',
+      label: 'Валюта до',
+    },
   ],
+  selectedFilters: defaultSelectedFilters,
   loading: false,
   error: null,
 }
@@ -75,28 +150,24 @@ const adminOrders = createSlice({
       state.error = null;
     },
     fetchFiltersSuccess(state, action: PayloadAction<FiltersLoaded>) {
-      // const {
-      //   statusGroupList,
-      //   toChangeStatusGroupID,
-      //   operationTypeID,
-      //   currencyID,
-      // } = action.payload;
       const payload = action.payload;
-
       for (let key in payload) {
         const foundFilter = state.filters.find(filter => filter.filterName === key);
-
         if (foundFilter) {
-          foundFilter.options = payload[key]
+          foundFilter.options = payload[key];
         }
       }
+
       state.loading = false;
       state.error = null;
     },
     fetchFiltersFailure(state, action: PayloadAction<string>) {
       state.loading = false;
       state.error = action.payload;
-    }
+    },
+    updateSelectedFilters(state, action: PayloadAction<Record<string, string | number | number[]>>) {
+      state.selectedFilters = Object.assign(state.selectedFilters, action.payload);
+    },
   }
 });
 
@@ -104,6 +175,7 @@ export const {
   fetchFiltersStart,
   fetchFiltersSuccess,
   fetchFiltersFailure,
+  updateSelectedFilters,
 } = adminOrders.actions;
 export default adminOrders.reducer;
 
@@ -117,18 +189,19 @@ export const fetchFilters = (): AppThunk => async (dispatch: any) => {
 
   try {
     dispatch(fetchFiltersStart());
-    // const comments = await getComments(issue.comments_url)
+
     const [
       statusGroupsFilter,
       statusGroupsUse,
       currencyList,
       operationTypeList,
     ] = await allPromises;
+
     dispatch(fetchFiltersSuccess({
       statusGroupList: statusGroupsFilter,
       toChangeStatusGroupID: statusGroupsUse,
-      operationTypeID: currencyList,
-      currencyID: operationTypeList,
+      operationTypeID: operationTypeList,
+      currencyID: currencyList,
     }));
   } catch (err) {
     // dispatch(fetchFiltersFailure(err));

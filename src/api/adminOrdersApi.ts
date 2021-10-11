@@ -22,27 +22,27 @@ const api = axios.create({
 export async function getStatusGroupsFilter() {
   const url = `/list/fetch_status_groups_filter`;
 
-  const data = await api.get<StatusGroups[]>(url);
+  const { data } = await api.get<StatusGroups[]>(url);
   return data;
 }
 
 export async function getStatusGroupsUse() {
   const url = `/list/fetch_status_groups_use`;
 
-  const data = await api.get<StatusGroups[]>(url);
+  const { data } = await api.get<StatusGroups[]>(url);
   return data;
 }
 
 export async function getCurrencyList() {
   const url = `/list/fetch_currency_list`;
 
-  const data = await api.get<AdminOrdersFilterData[]>(url);
+  const { data } = await api.get<AdminOrdersFilterData[]>(url);
   return data;
 }
 
 export async function getOperationTypeList() {
   const url = `/list/fetch_operation_type_list`;
 
-  const data = await api.get<AdminOrdersFilterData[]>(url);
+  const { data } = await api.get<AdminOrdersFilterData[]>(url);
   return data;
 }
