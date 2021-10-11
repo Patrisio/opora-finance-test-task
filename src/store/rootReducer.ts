@@ -2,7 +2,7 @@ import { combineReducers } from '@reduxjs/toolkit';
 import adminOrdersReducer from './adminOrdersSlice';
 
 const rootReducer = combineReducers({
-  adminOrdersSlice: adminOrdersReducer,
+  adminOrders: adminOrdersReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

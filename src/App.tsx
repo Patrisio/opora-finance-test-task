@@ -19,7 +19,7 @@ export default function App() {
   const {
     filters, selectedFilters, adminOrdersLoading,
     adminOrdersLength, adminOrders, filtersError, adminOrdersError,
-  } = useTypedSelector(state => state.adminOrdersSlice);
+  } = useTypedSelector(state => state.adminOrders);
   const {
     fetchFilters, resetSelectedFilters,
     updateSelectedFilters, fetchAdminOrders,

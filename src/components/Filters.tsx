@@ -18,12 +18,12 @@ import { SelectedFilters } from '../store/adminOrdersSlice';
 
 type FiltersProps = {
   filters: Filter[],
-  getData: any,//(selectedFilters: SelectedFilters) => void,
+  getData: (selectedFilters: SelectedFilters) => void,
   resetFilters: () => void,
 };
 
 export default function Filters({ filters, getData, resetFilters }: FiltersProps) {
-  const { selectedFilters, adminOrdersLoading, filtersLoading } = useTypedSelector(state => state.adminOrdersSlice);
+  const { selectedFilters, adminOrdersLoading, filtersLoading } = useTypedSelector(state => state.adminOrders);
   const { updateSelectedFilters } = useActions();
 
   const isDisabled = filtersLoading || adminOrdersLoading;
