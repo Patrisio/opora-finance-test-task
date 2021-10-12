@@ -71,7 +71,7 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
                 const id = getIdByValue(filter.options as Option[], value);
                 handleChange(filter.filterName, id);
               }}
-              isDisabled={isDisabled}
+              isDisabled={filtersLoading}
             />
           </Grid>
         );
