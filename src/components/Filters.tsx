@@ -1,9 +1,10 @@
-import React, { ChangeEvent } from 'react';
+import React, { useEffect, ChangeEvent } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { SelectChangeEvent } from '@mui/material';
 
+import AutoComplete from './AutoComplete';
 import Select from './Select';
 import MultiSelect from './MultiSelect';
 import Input from './Input';
@@ -13,7 +14,7 @@ import { useActions } from '../hooks/useActions';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 
 import { Filter, Option } from '../types';
-import { convertDateToTimestamp } from '../utils';
+import { convertDateToTimestamp, isCorrectDate } from '../utils';
 import { SelectedFilters } from '../store/adminOrdersSlice';
 
 type FiltersProps = {
@@ -50,6 +51,30 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
 
   const renderFilter = (filter: Filter) => {
     switch (filter.type) {
+      case 'autocomplete':
+        const getOptions = (options: Option[]) => options.map((option) => ({ value: option.name }));
+        const getIdByValue = (options: Option[], value: string) => {
+          const foundOption = options.find(option => option.name.toLowerCase() === value?.toLowerCase());
+          return foundOption ? foundOption.ID : null;
+        };
+
+        return (
+          <Grid item xs={2} key={filter.filterName}>
+            <AutoComplete
+              placeholder={filter.label}
+              options={getOptions(filter.options as Option[])}
+              onChange={(value: string) => {
+                const id = getIdByValue(filter.options as Option[], value);
+                handleChange(filter.filterName, id);
+              }}
+              onBlur={(value: string) => {
+                const id = getIdByValue(filter.options as Option[], value);
+                handleChange(filter.filterName, id);
+              }}
+              isDisabled={isDisabled}
+            />
+          </Grid>
+        );
       case 'input':
         return (
           <Grid item xs={2} key={filter.filterName}>
@@ -63,7 +88,7 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
                   value;
                 handleChange(filter.filterName, formattedValue);
               }}
-              disabled={isDisabled}
+              disabled={filtersLoading}
               type={filter.inputType as 'number' | 'text'}
             />
           </Grid>
@@ -105,8 +130,10 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
           <Grid item xs={2} key={filter.filterName}>
             <Datepicker
               onChange={(date: Date | null) => {
-                const timestamp = date ? convertDateToTimestamp(String(date)) : null;
-                handleChange(filter.filterName, timestamp);
+                if (date && isCorrectDate(date)) {
+                  const timestamp = date ? convertDateToTimestamp(String(date)) : null;
+                  handleChange(filter.filterName, timestamp);
+                }
               }}
               label={filter.label}
               value={getDatePickerValue(selectedFilters[filter.filterName] as number | null) as any}
@@ -114,23 +141,21 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
             />
           </Grid>
         );
+      default:
+        return;
     }
   };
+
+  const deps = filters.map(filter => selectedFilters[filter.filterName]);
+
+  useEffect(() => {
+    getData(selectedFilters);
+  }, deps);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2} sx={{ alignItems: 'center' }}>
         { filters.map(filter => renderFilter(filter)) }
-
-        <Grid item xs={2}>
-          <Button
-            variant='contained'
-            onClick={() => getData(selectedFilters)}
-            disabled={isDisabled}
-          >
-            Получить данные
-          </Button>
-        </Grid>
 
         <Grid item xs={2}>
           <Button

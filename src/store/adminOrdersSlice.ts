@@ -32,9 +32,9 @@ export type SelectedFilters = {
 	orderBy: OrderByFilter | null,
 };
 
-type SelectedFiltersKeys = Partial<keyof SelectedFilters>;
+export type AdminOrderEntity = {
+  [key: string]: string | number | null,
 
-type AdminOrderEntity = {
   orderID: number,
   publicID: string,
   createdDate: number,
@@ -113,18 +113,21 @@ const initialState: AdminOrdersState = {
       type: 'select',
       filterName: 'toChangeStatusGroupID',
       label: 'Выбор статуса',
+      inputType: null,
       options: [],
     },
     {
       type: 'multiselect',
       filterName: 'statusGroupList',
       label: 'Добавить теги',
+      inputType: null,
       options: [],
     },
     {
       type: 'select',
       filterName: 'orderBy',
       label: 'Сортировка',
+      inputType: null,
       options: sortingOptions,
     },
     {
@@ -132,17 +135,20 @@ const initialState: AdminOrdersState = {
       filterName: 'publicID',
       label: 'ID заявки',
       inputType: 'text',
+      options: null,
     },
     {
-      type: 'select',
+      type: 'autocomplete',
       filterName: 'operationTypeID',
       label: 'Тип операции',
+      inputType: null,
       options: [],
     },
     {
       type: 'select',
       filterName: 'currencyID',
       label: 'Валюта',
+      inputType: null,
       options: [],
     },
     {
@@ -150,16 +156,21 @@ const initialState: AdminOrdersState = {
       filterName: 'nearAmount',
       label: 'Объем',
       inputType: 'number',
+      options: null,
     },
     {
       type: 'date',
       filterName: 'timeFrom',
       label: 'Время от',
+      inputType: null,
+      options: null,
     },
     {
       type: 'date',
       filterName: 'timeTo',
       label: 'Время до',
+      inputType: null,
+      options: null,
     },
   ],
   selectedFilters: defaultSelectedFilters,

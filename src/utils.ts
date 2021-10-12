@@ -19,3 +19,7 @@ export function convertTimestampToDate(timestamp: number): string {
 
   return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 }
+
+export function isCorrectDate(date: Date) {
+  return !!date.getDate() && !!date.getMonth() && String(date.getFullYear()).length === 4;
+}

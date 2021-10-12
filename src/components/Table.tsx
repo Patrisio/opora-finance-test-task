@@ -1,45 +1,44 @@
-import React from 'react';
+import React, { memo } from 'react';
 import Paper from '@mui/material/Paper';
 import { Table as MaterialTable } from '@mui/material';
-import { Typography } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import CircularProgress from '@mui/material/CircularProgress';
+import { AdminOrderEntity } from '../store/adminOrdersSlice';
 
 export type Column = {
   id: string;
   label: string;
   minWidth?: number;
-  format?: (value: number) => string,
+  format: ((value: number) => string) | null,
 };
 
 type TableProps = {
   columns: Column[],
-  rows: any,
+  rows: AdminOrderEntity[],
   isLoading?: boolean,
 };
 
 export default function Table({ columns, rows, isLoading }: TableProps) {
-  const tableColumns = columns.map((column) => (
+  const tableColumns = columns.map(({ id, minWidth, label }) => (
     <TableCell
-      key={column.id}
-      style={{ minWidth: column.minWidth }}
+      key={id}
+      style={{ minWidth: minWidth }}
     >
-      {column.label}
+      { label }
     </TableCell>
   ));
 
-  const getTableCellValue = (column: Column, value: string | number) => {
+  const getTableCellValue = (column: Column, value: string | number | null) => {
     return column.format && typeof value === 'number'
       ? column.format(value * 1000)
       : value;
   };
 
   const tableRows = rows.length > 0 ?
-    rows.map((row: any) => {
+    rows.map((row) => {
       return (
         <TableRow
           hover
@@ -58,13 +57,7 @@ export default function Table({ columns, rows, isLoading }: TableProps) {
         </TableRow>
       );
     }) :
-    <Typography
-      variant='h6'
-      gutterBottom
-      component='div'
-    >
-      Нет данных
-    </Typography>;
+    <tr><td>Нет данных</td></tr>;
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -77,10 +70,12 @@ export default function Table({ columns, rows, isLoading }: TableProps) {
           </TableHead>
 
           <TableBody>
-            { isLoading ? <CircularProgress /> : tableRows }
+            { isLoading ? <tr><td>Данные загружаются...</td></tr> : tableRows }
           </TableBody>
         </MaterialTable>
       </TableContainer>
     </Paper>
   );
 }
+
+export const MemoizedTable = memo(Table);

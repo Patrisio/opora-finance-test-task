@@ -1,12 +1,13 @@
-import React, { useEffect, useState, ChangeEvent } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 import Container from '@mui/material/Container';
-import { TablePagination as Pagination } from '@mui/material';
+// import { TablePagination as Pagination } from '@mui/material';
 import Alert from '@mui/material/Alert';
+import { Pagination } from 'antd';
 
 import Filters from './components/Filters';
-import Table, { Column } from './components/Table';
+import { MemoizedTable, Column } from './components/Table';
 
 import { useActions } from'./hooks/useActions';
 import { useTypedSelector } from './hooks/useTypedSelector';
@@ -14,6 +15,7 @@ import { convertTimestampToDate } from './utils';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_ROWS_PER_PAGE } from './constants';
 
 import './App.css';
+import { SelectedFilters } from './store/adminOrdersSlice';
 
 export default function App() {
   const {
@@ -26,17 +28,18 @@ export default function App() {
   } = useActions();
   const [pageNumber, updatePageNumber] = useState<number>(DEFAULT_PAGE_NUMBER);
 
-  const handleRowPerPageChange = (event: ChangeEvent<HTMLInputElement>) => {
-    updateSelectedFilters({
-      limit: +event.target.value,
-      offset: 0,
-    });
-    updatePageNumber(DEFAULT_PAGE_NUMBER);
-  };
+  const handlePageChange = (page: number, size: number | undefined) => {
+    if (size && (size !== selectedFilters.limit)) {
+      updateSelectedFilters({
+        limit: size,
+        offset: 0,
+      });
+      updatePageNumber(DEFAULT_PAGE_NUMBER);
+      return;
+    }
 
-  const handlePageChange = (event: unknown, newPage: number) => {
-    updatePageNumber(newPage);
-    updateSelectedFilters({ offset: newPage * selectedFilters.limit });
+    updatePageNumber(page);
+    updateSelectedFilters({ offset: (page - 1) * selectedFilters.limit });
   };
 
   const renderAlert = () => {
@@ -49,6 +52,7 @@ export default function App() {
       id: 'publicID',
       label: 'Публичный ID ордера',
       minWidth: 170,
+      format: null,
     },
     {
       id: 'createdDate',
@@ -60,31 +64,37 @@ export default function App() {
       id: 'orderType',
       label: 'Тип ордера',
       minWidth: 170,
+      format: null,
     },
     {
       id: 'direction',
       label: 'Направление',
       minWidth: 170,
+      format: null,
     },
     {
       id: 'statusName',
       label: 'Статус',
       minWidth: 170,
+      format: null,
     },
     {
       id: 'amount',
       label: 'Сумма',
       minWidth: 170,
+      format: null,
     },
     {
       id: 'city',
       label: 'Город',
       minWidth: 170,
+      format: null,
     },
     {
       id: 'userPrivateName',
       label: 'Имя пользователя',
       minWidth: 170,
+      format: null,
     },
   ];
 
@@ -111,25 +121,31 @@ export default function App() {
       <Box sx={{ flexWrap: 'wrap' }}>
         <Filters
           filters={filters}
-          getData={fetchAdminOrders}
+          getData={(selectedFilters: SelectedFilters) => {
+            updatePageNumber(DEFAULT_PAGE_NUMBER);
+            fetchAdminOrders({
+              ...selectedFilters,
+              offset: 0,
+            });
+          }}
           resetFilters={resetSelectedFilters}
         />
       </Box>
 
-      <Table
+      <MemoizedTable
         columns={columns}
         rows={adminOrders || []}
         isLoading={adminOrdersLoading}
       />
 
       <Pagination
-        rowsPerPageOptions={DEFAULT_ROWS_PER_PAGE}
-        component='div'
-        count={adminOrdersLength}
-        rowsPerPage={selectedFilters.limit}
-        page={pageNumber}
-        onPageChange={handlePageChange}
-        onRowsPerPageChange={handleRowPerPageChange}
+        total={adminOrdersLength}
+        current={pageNumber}
+        defaultCurrent={DEFAULT_PAGE_NUMBER}
+        pageSizeOptions={DEFAULT_ROWS_PER_PAGE}
+        pageSize={selectedFilters.limit}
+        showSizeChanger
+        onChange={handlePageChange}
       />
     </Container>
   );

@@ -1,4 +1,4 @@
-type FilterType = 'input' | 'select' | 'multiselect' | 'date';
+type FilterType = 'autocomplete' | 'input' | 'select' | 'multiselect' | 'date';
 
 export type Option = {
   ID: number | string,
@@ -10,6 +10,6 @@ export type Filter = {
   type: FilterType,
   filterName: string,
   label: string,
-  options?: Option[],
-  inputType?: 'text' | 'number',
+  options: Option[] | null,
+  inputType: 'text' | 'number' | null,
 };
