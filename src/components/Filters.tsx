@@ -130,7 +130,7 @@ export default function Filters({ filters, getData, resetFilters }: FiltersProps
           <Grid item xs={2} key={filter.filterName}>
             <Datepicker
               onChange={(date: Date | null) => {
-                if (date && isCorrectDate(date)) {
+                if (date === null || isCorrectDate(date)) {
                   const timestamp = date ? convertDateToTimestamp(String(date)) : null;
                   handleChange(filter.filterName, timestamp);
                 }
